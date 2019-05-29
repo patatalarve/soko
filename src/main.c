@@ -1,13 +1,22 @@
+#include <curses.h>
 
-#include <stdio.h>
-
+#include "game.h"
 #include "map.h"
 
 int main() {
+
     map_s *map = create_map("./level/map.dat");
-
     if (!map)
-        return 1;
+        return 84;
 
-    return 0;
+    WINDOW *win = initscr();
+    noecho();
+    cbreak();
+    keypad(win, TRUE);
+
+    int ret = gameloop(win, map);
+
+    endwin();
+
+    return ret;
 }

@@ -103,8 +103,8 @@ map_s *create_map(const char *path) {
     find_boxes(map);
     find_objectives(map);
     for (int i = 0; map->box[i].x >= 0 || map->obj[i].x >= 0; i++) {
-        if ((map->box[i].x >= 0 && !map->obj[i].x >= 0) || 
-            (map->obj[i].x >= 0 && !map->box[i].x >= 0))
+        if ((map->box[i].x >= 0 && !(map->obj[i].x >= 0)) || 
+            (map->obj[i].x >= 0 && !(map->box[i].x >= 0)))
             return NULL;
     }
     return map;

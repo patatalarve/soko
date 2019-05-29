@@ -13,6 +13,7 @@ NAME		=	soko
 SRCS_DIR	=	src/
 SRCS_FILES	=	main.c
 SRCS_FILES	+= 	map.c
+SRCS_FILES	+= 	game.c
 
 SRCS		=	$(addprefix $(SRCS_DIR), $(SRCS_FILES))
 
