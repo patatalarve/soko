@@ -12,6 +12,7 @@ NAME		=	soko
 ## ressources
 SRCS_DIR	=	src/
 SRCS_FILES	=	main.c
+SRCS_FILES	+= 	map.c
 
 SRCS		=	$(addprefix $(SRCS_DIR), $(SRCS_FILES))
 
@@ -20,7 +21,7 @@ OBJS		=	$(SRCS:.c=.o)
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	@$(CC) -o $(NAME) $(OBJS) $(CFLAGS)
+	@$(CC) -o $(NAME) $(OBJS) $(CFLAGS) -g3
 	@printf "[\033[0;36mbuilt\033[0m] % 32s\n" $(NAME) | tr ' ' '.'
 
 %.o: %.c
