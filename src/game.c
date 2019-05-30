@@ -1,4 +1,7 @@
 #include <curses.h>
+#include <time.h>
+#include <stdlib.h>
+
 #include "map.h"
 #include "level.h"
 
@@ -57,9 +60,37 @@ static void move_curs(int ch, map_s *map) {
     map->player.y = y;
 }
 
+static int check_deadlock(map_s *map, int y, int x) {
+    int dir_x = 0;
+    int dir_y = 0;
+    int tmp_x = x;
+    int tmp_y = y;
+
+    //  ternaire qui empeche le segfault
+    if (map->map[y > 0 ? y - 1 : y][x] == '1') {
+        dir_x = -1;
+    } else if (map->map[map->map[y + 1] ? y + 1 : y][x] == '1') {
+        dir_x = 1;
+    } else if (map->map[y][x > 0 ? x - 1 : x] == '1') {
+        dir_y = -1;
+    } else if (map->map[y][map->map[y][x + 1] ? x + 1 : x] == '1') {
+        dir_y = 1;
+    }
+    while (map->map[tmp_y][tmp_x] != '1' && tmp_x > 0 && tmp_y > 0 && map->map[tmp_y][tmp_x]) {
+        tmp_x += dir_x;
+        tmp_y += dir_y;
+        if (map->map[dir_x < 0 ? tmp_y - 1 : dir_x > 0 ? tmp_y + 1 : tmp_y]
+                    [dir_y < 0 ? tmp_x - 1 : dir_y > 0 ? tmp_x + 1 : tmp_x])
+            return 1;
+
+    }
+    return 0;
+}
+
 static void print_map(map_s *map) {
     for (int i = 0; map->map[i]; i++) {
         for (int j = 0; map->map[i][j]; j++) {
+            attron(COLOR_PAIR(check_deadlock(map, i, j)));
             if (map->map[i][j] == '0' ||
                 map->map[i][j] == '1' ||
                 map->map[i][j] == '4') { // regarder ce qu est une putain de ternaire <3
@@ -67,6 +98,7 @@ static void print_map(map_s *map) {
                 mvprintw(i, j, "%c", block);
             } else if (map->map[i][j] == '3')
                 mvprintw(i, j, "%c", OBJECTIVE);
+            attron(COLOR_PAIR(1));
         }
     }
     for (int i = 0; map->box[i].x >= 0; i++) {
@@ -78,15 +110,33 @@ static void print_map(map_s *map) {
             }
 
         }
-        mvprintw(map->box[i].y, map->box[i].x, "%c", (found == 0 ? BOX : DONE));
+        mvprintw(map->box[i].y, map->box[i].x, "%c", (found == 0 ? BOX : DONE)); // do the deadlock search
     }
-    mvprintw(map->player.y, map->player.x, "%c", PLAYER);
+    mvprintw(map->player.y, map->player.x, "%c", PLAYER); //  do the deadlock search
+}
+
+static int random_move() {
+    getch();
+    int r = rand() % 4;
+
+    switch (r) {
+        case 0:
+            return KEY_LEFT;
+        case 1:
+            return KEY_RIGHT;
+        case 2:
+            return KEY_UP;
+        default:
+            return KEY_DOWN;
+    }
 }
 
 int gameloop(WINDOW *win, map_s *map) {
     print_map(map);
+    srand(time(NULL));
+    random_move();
     while (!won(map)) {
-        move_curs(getch(), map);
+        move_curs(getch(), map); // replace with 'random move'
         wclear(win);
         print_map(map);
     }

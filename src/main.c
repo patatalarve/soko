@@ -3,9 +3,13 @@
 #include "game.h"
 #include "map.h"
 
-int main() {
+int main(int ac, char **av) {
 
-    map_s *map = create_map("./level/map.dat");
+    if (ac != 2) {
+        return 84;
+    }
+
+    map_s *map = create_map(av[1]);
     if (!map)
         return 84;
 
@@ -14,6 +18,10 @@ int main() {
     cbreak();
     curs_set(0);
     keypad(win, TRUE);
+    start_color();
+
+    init_pair(0, COLOR_BLACK, COLOR_RED);
+    init_pair(1, COLOR_BLACK, COLOR_WHITE);
 
     int ret = gameloop(win, map);
 
