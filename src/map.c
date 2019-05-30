@@ -81,7 +81,7 @@ static void find_objectives(map_s *map) {
     obj = 0;
     for (int i = 0; map->map[i]; i++) {
         for (int j = 0; map->map[i][j]; j++) {
-            if (map->map[i][j] == '2' || map->map[i][j] == '3') {
+            if (map->map[i][j] == '4' || map->map[i][j] == '3') {
                 map->obj[obj].x = j;
                 map->obj[obj++].y = i;
             }

@@ -5,7 +5,7 @@
 
 int main() {
 
-    map_s *map = create_map("./level/map.dat");
+    map_s *map = create_map("./level/easy_6.dat");
     if (!map)
         return 84;
 

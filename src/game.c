@@ -24,7 +24,8 @@ static void move_curs(int ch, map_s *map) {
     for (int i = 0; map->box[i].x > -1; i++) {
         if (map->box[i].x == x && map->box[i].y == y) {
             if ((map->map[y * 2 - map->player.y][x * 2 - map->player.x] != '0') && 
-                (map->map[y * 2 - map->player.y][x * 2 - map->player.x] != '4'))
+                (map->map[y * 2 - map->player.y][x * 2 - map->player.x] != '4') &&
+                (map->map[y * 2 - map->player.y][x * 2 - map->player.x] != '3'))
                 return ;
             else {
                 map->box[i].x = map->box[i].x +(x - map->player.x);
@@ -55,8 +56,9 @@ static void print_map(map_s *map) {
                 found = 1;
                 break ;
             }
+
         }
-        mvprintw(map->box[i].y, map->box[i].x, "%c", (found == 1 ? BOX : DONE));
+        mvprintw(map->box[i].y, map->box[i].x, "%c", (found == 0 ? BOX : DONE));
     }
     mvprintw(map->player.y, map->player.x, "%c", PLAYER);
 }
