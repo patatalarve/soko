@@ -12,6 +12,7 @@ int main() {
     WINDOW *win = initscr();
     noecho();
     cbreak();
+    curs_set(0);
     keypad(win, TRUE);
 
     int ret = gameloop(win, map);
