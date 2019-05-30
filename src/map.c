@@ -45,7 +45,7 @@ static void find_player(map_s *map) {
     }
 }
 
-static void find_boxes(map_s *map) {
+static int find_boxes(map_s *map) {
     int box = 0;
     for (int i = 0; map->map[i]; i++) {
         for (int j = 0; map->map[i][j]; j++) {
@@ -54,7 +54,8 @@ static void find_boxes(map_s *map) {
             }
         }
     }
-    map->box = malloc(sizeof(coo_s) * box + 1);
+    if ((map->box = malloc(sizeof(coo_s) * box * 2 + 1)) == NULL)
+        return 0;
     box = 0;
     for (int i = 0; map->map[i]; i++) {
         for (int j = 0; map->map[i][j]; j++) {
@@ -66,9 +67,10 @@ static void find_boxes(map_s *map) {
     }
     map->box[box].x = -1;
     map->box[box].y = -1;
+    return 1;
 }
 
-static void find_objectives(map_s *map) {
+static int find_objectives(map_s *map) {
     int obj = 0;
     for (int i = 0; map->map[i]; i++) {
         for (int j = 0; map->map[i][j]; j++) {
@@ -77,7 +79,8 @@ static void find_objectives(map_s *map) {
             }
         }
     }
-    map->obj = malloc(sizeof(coo_s) * obj + 1);
+    if ((map->obj = malloc(sizeof(coo_s) * obj * 2 + 1)) == NULL)
+        return 0;
     obj = 0;
     for (int i = 0; map->map[i]; i++) {
         for (int j = 0; map->map[i][j]; j++) {
@@ -89,6 +92,7 @@ static void find_objectives(map_s *map) {
     }
     map->obj[obj].x = -1;
     map->obj[obj].y = -1;
+    return 1;
 }
 
 map_s *create_map(const char *path) {
@@ -100,8 +104,8 @@ map_s *create_map(const char *path) {
     if (!map->map)
         return NULL;
     find_player(map);
-    find_boxes(map);
-    find_objectives(map);
+    if (find_boxes(map) == 0 || find_objectives(map) == 0)
+        return NULL;
     for (int i = 0; map->box[i].x >= 0 || map->obj[i].x >= 0; i++) {
         if ((map->box[i].x >= 0 && !(map->obj[i].x >= 0)) || 
             (map->obj[i].x >= 0 && !(map->box[i].x >= 0)))

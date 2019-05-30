@@ -3,7 +3,24 @@
 #include "level.h"
 
 static int won(map_s *map) {
-    map = map;
+    for (int i = 0; map->box[i].x > -1; i++) {
+        char done = 0;
+        for (int j = 0; map->obj[j].x > -1; j++) {
+            if (map->box[i].x == map->obj[j].x && map->box[i].y == map->obj[j].y)
+                done = 1;
+        }
+        if (done == 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static int noBlock(map_s *map, int x, int y) {
+    for (int i = 0; map->box[i].x > -1; i++) {
+        if (map->box[i].x == y && map->box[i].y == x)
+            return 1;
+    }
     return 0;
 }
 
@@ -23,9 +40,11 @@ static void move_curs(int ch, map_s *map) {
         return ;
     for (int i = 0; map->box[i].x > -1; i++) {
         if (map->box[i].x == x && map->box[i].y == y) {
-            if ((map->map[y * 2 - map->player.y][x * 2 - map->player.x] != '0') && 
+            if (((map->map[y * 2 - map->player.y][x * 2 - map->player.x] != '0') && 
                 (map->map[y * 2 - map->player.y][x * 2 - map->player.x] != '4') &&
-                (map->map[y * 2 - map->player.y][x * 2 - map->player.x] != '3'))
+                (map->map[y * 2 - map->player.y][x * 2 - map->player.x] != '2') &&
+                (map->map[y * 2 - map->player.y][x * 2 - map->player.x] != '3')) ||
+                noBlock(map, y * 2 - map->player.y, x * 2 - map->player.x))
                 return ;
             else {
                 map->box[i].x = map->box[i].x +(x - map->player.x);
@@ -46,7 +65,8 @@ static void print_map(map_s *map) {
                 map->map[i][j] == '4') { // regarder ce qu est une putain de ternaire <3
                 char block = (map->map[i][j] == '0' ? GROUND : map->map[i][j] == '1' ? WALL : OBJECTIVE);
                 mvprintw(i, j, "%c", block);
-            }
+            } else if (map->map[i][j] == '3')
+                mvprintw(i, j, "%c", OBJECTIVE);
         }
     }
     for (int i = 0; map->box[i].x >= 0; i++) {
